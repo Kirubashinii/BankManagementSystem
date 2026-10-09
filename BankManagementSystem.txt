@@ -1,0 +1,82 @@
+import os
+
+DATA_FILE = "bank_data.txt"
+
+def load_accounts():
+    accounts = {}
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as file:
+            for line in file:
+                acc_no, name, balance = line.strip().split(',')
+                accounts[acc_no] = {"name": name, "balance": float(balance)}
+    return accounts
+
+def save_accounts(accounts):
+    with open(DATA_FILE, "w") as file:
+        for acc_no, info in accounts.items():
+            file.write(f"{acc_no},{info['name']},{info['balance']}\n")
+
+def create_account(accounts):
+    acc_no = input("Enter account number: ")
+    if acc_no in accounts:
+        print("Account already exists.")
+        return
+    name = input("Enter account holder name: ")
+    balance = float(input("Enter initial deposit: "))
+    accounts[acc_no] = {"name": name, "balance": balance}
+    print("Account created successfully.")
+
+def view_balance(accounts):
+    acc_no = input("Enter account number: ")
+    if acc_no in accounts:
+        print(f"Account Holder: {accounts[acc_no]['name']}")
+        print(f"Balance: {accounts[acc_no]['balance']}")
+    else:
+        print("Account not found.")
+
+def deposit(accounts):
+    acc_no = input("Enter account number: ")
+    if acc_no in accounts:
+        amount = float(input("Enter amount to deposit: "))
+        accounts[acc_no]['balance'] += amount
+        print("Amount deposited successfully.")
+    else:
+        print("Account not found.")
+
+def withdraw(accounts):
+    acc_no = input("Enter account number: ")
+    if acc_no in accounts:
+        amount = float(input("Enter amount to withdraw: "))
+        if amount <= accounts[acc_no]['balance']:
+            accounts[acc_no]['balance'] -= amount
+            print("Amount withdrawn successfully.")
+        else:
+            print("Insufficient balance.")
+    else:
+        print("Account not found.")
+
+def main():
+    accounts = load_accounts()
+    while True:
+        print("\n--- Banking Management System ---")
+        print("1. Create Account")
+        print("2. View Balance")
+        print("3. Deposit")
+        print("4. Withdraw")
+        print("5. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            create_account(accounts)
+        elif choice == '2':
+            view_balance(accounts)
+        elif choice == '3':
+            deposit(accounts)
+        elif choice == '4':
+            withdraw(accounts)
+        elif choice == '5':
+            save_accounts(accounts)
+            print("Exiting... Have a nice day!")
+            break
+        else:
+            print("Invalid choice. Try again.")
